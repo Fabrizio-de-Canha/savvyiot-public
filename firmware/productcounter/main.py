@@ -20,6 +20,7 @@ do_connect(wifi_client)
 
 ##Check for firmware update
 if wifi_client.isconnected():
+    set_time()
     ota_updater = OTAUpdater(wifi_client, firmware_url, ['main.py', 'boot.py', 'mqtt.py'])
     ota_updater.download_and_install_update_if_available()
 
