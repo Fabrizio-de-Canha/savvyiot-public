@@ -19,7 +19,7 @@ for j in range(30):
     time.sleep(0.05)
 
 ## WIFI
-wifi_client = network.WLAN(network.wifi_client)
+wifi_client = network.WLAN(network.STA_IF)
 do_connect(wifi_client)
 set_time()
 
