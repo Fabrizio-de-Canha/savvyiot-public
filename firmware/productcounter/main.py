@@ -12,6 +12,12 @@ relay_1 = machine.Pin(32, machine.Pin.OUT)
 relay_2 = machine.Pin(33, machine.Pin.OUT)
 digital_input = machine.Pin(16, machine.Pin.IN)
 
+for j in range(30):  
+    led_pin.value(0)
+    time.sleep(0.05)
+    led_pin.value(1)
+    time.sleep(0.05)
+
 ## WIFI
 wifi_client = network.WLAN(network.wifi_client)
 do_connect(wifi_client)

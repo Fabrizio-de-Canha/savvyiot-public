@@ -4,17 +4,18 @@ import ubinascii  # type: ignore
 import time
 from boot import do_connect
 import utime # type: ignore
+from secret import *
 
 led_pin = machine.Pin(18, machine.Pin.OUT)
 
-mqtt_username = 'test:test'
-mqtt_password = '!Q2w3e4r5t'
-mqtt_server = '102.22.83.11'
-mqtt_ClientID = 'test'
-
 macAddress = ubinascii.hexlify(machine.unique_id()).decode()
 
+## OUT
 mqtt_data_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/data'
+mqtt_health_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/status'
+
+## IN
+mqtt_control_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/control'
 
 def recieve_mqtt(topic, msg):
     print('received message %s on topic %s' % (msg, topic))
@@ -46,10 +47,26 @@ def connect_mqtt():
 
     return client
 
-def send_health_check(mqttClient):
-    return
+def send_health_check(wifi_client, mqtt_client):
+    ## Get firmware version
 
-## {"data":[{"cycle_time":110558,"cycle_completed_timestamp":1720121276}],"timestamp":1720121276,"rssi":-68}
+    if not wifi_client.isconnected():
+        do_connect(wifi_client)
+
+    if wifi_client.isconnected():
+        rssi = wifi_client.status('rssi')
+        timestamp = 946684800 + utime.time()
+
+        try:
+            mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi}}}')
+        except OSError:
+                mqtt_client = connect_mqtt()
+                try:
+                    mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi}}}')
+                except OSError:
+                    return
+    
+    return mqtt_client
 
 def send_payload(wifi_client, mqtt_client, times, timestamps):
     if not wifi_client.isconnected():
@@ -68,8 +85,15 @@ def send_payload(wifi_client, mqtt_client, times, timestamps):
                     body = f'{body},{{"cycle_time":{i},"cycle_completed_timestamp":{timestamps[count]}}}'
                 count += 1
 
-            print('publishing')
-            mqtt_client.publish(mqtt_data_topic, f'{{"data":[{body}],"timestamp":{timestamp},"rssi":{rssi}}}')
+            try:
+                mqtt_client.publish(mqtt_data_topic, f'{{"data":[{body}],"timestamp":{timestamp},"rssi":{rssi}}}')
+            except OSError:
+                mqtt_client = connect_mqtt()
+                try:
+                    mqtt_client.publish(mqtt_data_topic, f'{{"data":[{body}],"timestamp":{timestamp},"rssi":{rssi}}}')
+                except OSError:
+                    ## If failed to send message just return for now
+                    return times, timestamps
             return [], []
     else:
         return times, timestamps
