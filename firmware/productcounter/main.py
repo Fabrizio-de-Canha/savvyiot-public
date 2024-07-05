@@ -17,11 +17,12 @@ digital_input = machine.Pin(16, machine.Pin.IN)
 ## WIFI
 wifi_client = network.WLAN(network.STA_IF)
 do_connect(wifi_client)
-set_time()
 
 ##Check for firmware update
-ota_updater = OTAUpdater(wifi_client, firmware_url, ['main.py', 'boot.py', 'mqtt.py'])
-ota_updater.download_and_install_update_if_available()
+if wifi_client.isconnected():
+    ota_updater = OTAUpdater(wifi_client, firmware_url, ['main.py', 'boot.py', 'mqtt.py'])
+    ota_updater.download_and_install_update_if_available()
+
 
 ##MQTT
 mqtt_client = connect_mqtt()

@@ -7,8 +7,11 @@ class OTAUpdater:
     """ This class handles OTA updates. It connects to the Wi-Fi, checks for updates, downloads and installs them."""
     def __init__(self, wifi_client, repo_url, filenames):
         self.wifi_client = wifi_client
-        self.filename = filenames
+        self.filenames = filenames
         self.repo_url = repo_url
+        self.firmware_urls = []
+        self.latest_codes = []
+        self.files_to_skip = []
         if "www.github.com" in self.repo_url :
             print(f"Updating {repo_url} to raw.githubusercontent")
             self.repo_url = self.repo_url.replace("www.github","raw.githubusercontent")
@@ -35,12 +38,14 @@ class OTAUpdater:
     def fetch_latest_code(self)->bool:
         """ Fetch the latest code from the repo, returns False if not found."""
         
+        count = 0
+
         # Fetch the latest code from the repo.
         for i in self.firmware_urls:
             response = urequests.get(i)
             res = False
             if response.status_code == 200:
-                print(f'Fetched latest firmware code, status: {response.status_code}, -  {response.text}')
+                print(f'Fetched latest firmware code, status: {response.status_code}')
         
                 # Save the fetched code to memory
                 self.latest_codes.append(response.text)
@@ -48,9 +53,10 @@ class OTAUpdater:
             
             elif response.status_code == 404:
                 print(f'Firmware not found - {i}.')
-                self.latest_codes.append('')
+                self.files_to_skip.append(self.filenames[count])
                 res = False
 
+            count += 1
         return res
 
     def update_no_reset(self):
@@ -59,9 +65,10 @@ class OTAUpdater:
         # Save the fetched code and update the version file to latest version.
         count = 0
         for i in self.filenames:
-            with open(f'latest_code_{i}', 'w') as f:
-                if self.latest_codes[count] != '':
+            if i not in self.files_to_skip:
+                with open(f'latest_code_{i}', 'w') as f:
                     f.write(self.latest_codes[count])
+                    print(f'wrote file latest_code_{i}')
 
             count += 1
         
@@ -81,14 +88,14 @@ class OTAUpdater:
     def update_and_reset(self):
         """ Update the code and reset the device."""
 
-        print(f"Updating device... (Renaming latest_code.py to {self.filename})", end="")
 
         # Overwrite the old code.
-        count = 0
         for i in self.filenames:
-            if self.latest_codes[count] != '':
-                os.rename(f'latest_code_{i}.py', i)  
-            count += 1
+            print(f"Updating device... (Renaming latest_code_{i} to {i})", end="")
+
+            if i not in self.files_to_skip:
+                os.rename(f'latest_code_{i}', i)  
+           
 
         # Restart the device to run the new code.
         print('Restarting device...')
@@ -96,7 +103,7 @@ class OTAUpdater:
         
     def check_for_updates(self):
         """ Check if updates are available."""
-
+        
         print(f'Checking for latest version... on {self.version_url}')
         response = urequests.get(self.version_url)
         

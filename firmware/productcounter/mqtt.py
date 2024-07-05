@@ -2,7 +2,7 @@ from umqtt.simple import MQTTClient  # type: ignore
 import machine  # type: ignore
 import ubinascii  # type: ignore
 import time
-from boot import do_connect
+from boot import do_connect, set_time
 import utime # type: ignore
 from secret import *
 import os
@@ -26,7 +26,7 @@ def connect_mqtt():
 
     ## Retry connections here
     ## Retry 10 times max
-    for i in range(10):
+    for i in range(5):
         print(f'connecting to mqtt: try {i + 1}...')
         try:
             client.connect()
@@ -53,6 +53,8 @@ def send_health_check(wifi_client, mqtt_client, firmware_version):
 
     if not wifi_client.isconnected():
         do_connect(wifi_client)
+        if wifi_client.isconnected():
+            set_time()
 
     if wifi_client.isconnected():
         rssi = wifi_client.status('rssi')
@@ -70,8 +72,15 @@ def send_health_check(wifi_client, mqtt_client, firmware_version):
     return mqtt_client
 
 def send_payload(wifi_client, mqtt_client, times, timestamps):
+    
     if not wifi_client.isconnected():
         do_connect(wifi_client)
+        if wifi_client.isconnected():
+            set_time()
+            if timestamps[0] - 946684800 < 7200:
+                count = 0
+                for i in timestamps:
+                    timestamps[count] = 946684800 + utime.time() - i + 946684800
 
     if wifi_client.isconnected():
         rssi = wifi_client.status('rssi')
