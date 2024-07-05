@@ -104,6 +104,6 @@ def send_payload(wifi_client, mqtt_client, times, timestamps):
                 except OSError:
                     ## If failed to send message just return for now
                     return times, timestamps
-            return [], []
+            return mqtt_client, [], []
     else:
-        return times, timestamps
+        return mqtt_client,times, timestamps

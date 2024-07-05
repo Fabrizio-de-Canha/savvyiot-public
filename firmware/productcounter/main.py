@@ -78,7 +78,7 @@ while True:
                 print(times)
                 print(timestamps)
 
-                times, timestamps = send_payload(wifi_client, mqtt_client, times, timestamps)
+                mqtt_client, times, timestamps = send_payload(wifi_client, mqtt_client, times, timestamps)
         
         lastTicks = currentTicks
     
