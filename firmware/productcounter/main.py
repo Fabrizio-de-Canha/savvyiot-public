@@ -6,17 +6,13 @@ from mqtt import connect_mqtt, send_payload, send_health_check
 import network # type: ignore
 from ota import OTAUpdater
 from secret import firmware_url
+import os
+import json
 
 led_pin = machine.Pin(18, machine.Pin.OUT)
 relay_1 = machine.Pin(32, machine.Pin.OUT)
 relay_2 = machine.Pin(33, machine.Pin.OUT)
 digital_input = machine.Pin(16, machine.Pin.IN)
-
-for j in range(30):  
-    led_pin.value(0)
-    time.sleep(0.05)
-    led_pin.value(1)
-    time.sleep(0.05)
 
 ## WIFI
 wifi_client = network.WLAN(network.STA_IF)
@@ -29,6 +25,14 @@ ota_updater.download_and_install_update_if_available()
 
 ##MQTT
 mqtt_client = connect_mqtt()
+
+firmware_version = 0
+
+if 'version.json' in os.listdir():    
+    with open('version.json') as f:
+        firmware_version = int(json.load(f)['version'])
+
+mqtt_client = send_health_check(wifi_client, mqtt_client, firmware_version)
 
 message_interval = 5
 

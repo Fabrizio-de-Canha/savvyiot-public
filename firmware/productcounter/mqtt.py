@@ -5,6 +5,7 @@ import time
 from boot import do_connect
 import utime # type: ignore
 from secret import *
+import os
 
 led_pin = machine.Pin(18, machine.Pin.OUT)
 
@@ -47,7 +48,7 @@ def connect_mqtt():
 
     return client
 
-def send_health_check(wifi_client, mqtt_client):
+def send_health_check(wifi_client, mqtt_client, firmware_version):
     ## Get firmware version
 
     if not wifi_client.isconnected():
@@ -62,7 +63,7 @@ def send_health_check(wifi_client, mqtt_client):
         except OSError:
                 mqtt_client = connect_mqtt()
                 try:
-                    mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi}}}')
+                    mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
                 except OSError:
                     return
     
