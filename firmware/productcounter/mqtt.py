@@ -59,7 +59,7 @@ def send_health_check(wifi_client, mqtt_client, firmware_version):
         timestamp = 946684800 + utime.time()
 
         try:
-            mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi}}}')
+            mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
         except OSError:
                 mqtt_client = connect_mqtt()
                 try:
