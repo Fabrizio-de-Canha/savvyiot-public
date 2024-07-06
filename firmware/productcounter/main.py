@@ -60,7 +60,7 @@ while True:
 
     if timestamp - lastHealthcheck > 3600:
         # send health check every hour
-        mqtt_client = send_health_check(wifi_client, mqtt_client)
+        mqtt_client = send_health_check(wifi_client, mqtt_client,firmware_version)
         lastHealthcheck = timestamp
 
 
