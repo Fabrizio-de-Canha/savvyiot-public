@@ -1,0 +1,5 @@
+.ENV
+.venv
+*/private.pem
+*/public.pem
+data
