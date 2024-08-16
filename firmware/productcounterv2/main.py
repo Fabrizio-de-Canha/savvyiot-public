@@ -10,9 +10,10 @@ import os
 import json
 
 led_pin = machine.Pin(13, machine.Pin.OUT)
+led_pin2 = machine.Pin(12, machine.Pin.OUT)
 relay_1 = machine.Pin(33, machine.Pin.OUT)
 relay_2 = machine.Pin(32, machine.Pin.OUT)
-digital_input = machine.Pin(16, machine.Pin.IN)
+digital_input = machine.Pin(17, machine.Pin.IN)
 
 relay_1_input = machine.Pin(34, machine.Pin.IN)
 relay_2_input = machine.Pin(35, machine.Pin.IN)
