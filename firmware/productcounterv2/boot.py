@@ -22,7 +22,7 @@ def set_time():
 def do_connect(client):
     import time    
     if not client.isconnected():
-        for i in range(3):
+        for i in range(8):
             print(f'connecting to network: try {i + 1}...')
             client.active(True)
             try:

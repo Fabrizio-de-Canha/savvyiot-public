@@ -6,6 +6,7 @@ from boot import do_connect, set_time
 import utime # type: ignore
 from secret import *
 import os
+import json
 
 led_pin = machine.Pin(13, machine.Pin.OUT)
 
@@ -18,9 +19,6 @@ mqtt_health_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/status'
 ## IN
 mqtt_control_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/control'
 
-def recieve_mqtt(topic, msg):
-    print('received message %s on topic %s' % (msg, topic))
-
 def connect_mqtt():
     client = MQTTClient(f'{mqtt_ClientID}_{macAddress}', mqtt_server, 1883, mqtt_username, mqtt_password)
 
@@ -29,6 +27,7 @@ def connect_mqtt():
     for i in range(5):
         print(f'connecting to mqtt: try {i + 1}...')
         try:
+            client.set_callback(recieve_mqtt)
             client.connect()
             for j in range(5):  
                 led_pin.value(0)
@@ -36,6 +35,7 @@ def connect_mqtt():
                 led_pin.value(1)
                 time.sleep(0.1)
             print('connected to mqtt server')
+            client.subscribe(mqtt_control_topic)
             return client
         except OSError:
             for j in range(5):  
@@ -107,3 +107,18 @@ def send_payload(wifi_client, mqtt_client, times, timestamps):
             return mqtt_client, [], []
     else:
         return mqtt_client,times, timestamps
+
+def check_process_messages(mqtt_client):
+    try:
+        mqtt_client.check_msg()
+    except OSError as e:
+        print(e)
+
+def recieve_mqtt(topic, msg):
+    if(topic.decode().split("/")[-1] == "control"):
+        jsonObj = json.loads(msg)
+        try:
+            if(jsonObj['type'] == "reset"):
+                machine.reset()
+        except:
+            print("error reading message")

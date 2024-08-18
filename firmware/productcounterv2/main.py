@@ -2,15 +2,17 @@ import machine  # type: ignore
 import time
 import utime # type: ignore
 from boot import do_connect, set_time, update_time
-from mqtt import connect_mqtt, send_payload, send_health_check
+from mqtt import connect_mqtt, send_payload, send_health_check, check_process_messages
 import network # type: ignore
 from ota import OTAUpdater
 from secret import firmware_url
 import os
 import json
+import ubinascii  # type: ignore
+
+print(ubinascii.hexlify(machine.unique_id()).decode())
 
 led_pin = machine.Pin(13, machine.Pin.OUT)
-led_pin2 = machine.Pin(12, machine.Pin.OUT)
 relay_1 = machine.Pin(33, machine.Pin.OUT)
 relay_2 = machine.Pin(32, machine.Pin.OUT)
 digital_input = machine.Pin(17, machine.Pin.IN)
@@ -65,7 +67,7 @@ while True:
 
     if timestamp - lastHealthcheck > 1800:
         # send health check every hour
-        mqtt_client = send_health_check(wifi_client, mqtt_client)
+        mqtt_client = send_health_check(wifi_client, mqtt_client,firmware_version)
         lastHealthcheck = timestamp
 
     if(relay_1_input.value() == 1):
@@ -101,3 +103,5 @@ while True:
 
     lastDigitalReading = currentDigitalReading
 
+    ##Check if there are messages
+    check_process_messages(mqtt_client)
