@@ -1,26 +1,14 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  auth_db:
-    image: postgres:15
+  db:
+    image: timescale/timescaledb:latest-pg16
     container_name: auth-postgres-db
     environment:
-      POSTGRES_USER: ${POSTGRES_AUTH_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_AUTH_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_AUTH_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ./data/auth_pgdata:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  app_db:
-    image: postgres:15
-    container_name: app-postgres-db
-    environment:
-      POSTGRES_USER: ${POSTGRES_APP_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_APP_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_APP_DB}
-    volumes:
-      - ./data/app_pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
