@@ -3,11 +3,12 @@ version: '3.9'
 services:
   db:
     image: timescale/timescaledb:latest-pg16
-    container_name: auth-postgres-db
+    container_name: timescaledb-savvyiot
     environment:
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/timescaledb
     volumes:
       - ./data/db:/var/lib/postgresql/data
     ports:
