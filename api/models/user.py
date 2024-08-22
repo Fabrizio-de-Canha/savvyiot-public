@@ -15,6 +15,7 @@ class User(Base):
     super_user = Column('super_user', Boolean, server_default=text("false"))
     email = Column('email', Text, unique=True)
     name = Column('name', Text)
+    surname = Column('surname', Text)
     password = Column('password', Text, nullable=True)
     last_login = Column('last_login', DateTime())
     password_reset = Column('password_reset', DateTime())

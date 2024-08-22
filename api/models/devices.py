@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB, UUID, BYTEA
 from sqlalchemy.sql import func
 from uuid import uuid4
 
-class User(Base):
+class Device(Base):
     __tablename__ = "devices"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)

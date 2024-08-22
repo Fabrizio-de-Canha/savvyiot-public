@@ -6,6 +6,15 @@ from db.session import Base, pg_url
 
 from alembic import context
 
+
+def exclude_by_name(name, type_, parent_names):
+    exclude_indexes = ["messages_timestamp_idx"]
+    if type_ == "index":
+        return name not in exclude_indexes
+    else:
+        return True
+
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -26,7 +35,6 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -41,6 +49,7 @@ def run_migrations_offline() -> None:
     """
     url = pg_url
     context.configure(
+        include_name=exclude_by_name,
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
@@ -67,7 +76,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata, include_name=exclude_by_name,
         )
 
         with context.begin_transaction():
