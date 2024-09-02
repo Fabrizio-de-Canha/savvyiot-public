@@ -8,6 +8,7 @@ class UserBase(BaseModel):
     id: uuid.UUID
     email: str
     name:  Optional[str]
+    surname:  Optional[str]
     last_login: Optional[datetime]
     login_count: Optional[int]
     created_on: Optional[datetime]

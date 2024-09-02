@@ -23,7 +23,7 @@ def callback_func(
             deviceMac = routing_key.split(".")[2]
             jsonBody = json.loads(body)
             timestamp = jsonBody["timestamp"]
-            message: Message = Message(message=jsonBody,timestamp=datetime.fromtimestamp(timestamp), tenant= tenantId, device_mac = deviceMac)
+            message: Message = Message(message=jsonBody,timestamp=datetime.fromtimestamp(timestamp, tz=timezone.utc), tenant= tenantId, device_mac = deviceMac)
             succeeded: bool = sqlClient.addMessage(message=message)
             deliveryTag = method.delivery_tag
             if succeeded:

@@ -3,9 +3,11 @@ from datetime import datetime, timedelta
 from jose import jwt
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi import Header, HTTPException, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordBearer
+from fastapi import Header, HTTPException, Depends, status
 from typing import Optional
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 private_key = rsa.generate_private_key(
     public_exponent=65537,
@@ -54,33 +56,38 @@ def create_jwt_token(user_id: str, admin: bool, superuser: bool):
     encoded_jwt = jwt.encode(to_encode, pem_private_key, algorithm=JWT_ALGORITHM)
     return encoded_jwt
 
-async def get_token_header(authorization: str | None = Header(default=None)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Authorization header is missing")
+async def get_token_header(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
-        token = authorization.split("Bearer ")[1]
         payload = jwt.decode(token, pem_public_key, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("sub")
+        print(user_id)
         if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise credentials_exception
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
     return user_id
 
-async def get_admin_header(authorization: Optional[str] = Header(None), user_id: str = Depends(get_token_header)):
+async def get_admin_header(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="User does not have admin rights",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
-        token = authorization.split("Bearer ")[1]
-        print(token)
         payload = jwt.decode(token, pem_public_key, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("sub")
         admin = payload.get("admin")
-        print(admin)
         if not admin:
-            raise HTTPException(status_code=403, detail="User doesn't have admin roles")
+            raise credentials_exception
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
     return user_id
     
 async def get_superuser_header(authorization: Optional[str] = Header(None), user_id: str = Depends(get_token_header)):

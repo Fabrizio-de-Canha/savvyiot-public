@@ -10,6 +10,7 @@ class Device(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)
     mac_id = Column('mac_id', Text, index=True)
+    tenant = Column('tenant', Text)
     active = Column('active', Boolean, server_default=text("false"))
     name = Column('name', Text)
     last_reported = Column('last_reported', DateTime())

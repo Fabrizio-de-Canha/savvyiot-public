@@ -6,7 +6,7 @@ from pathlib import Path
 import os
 import sys
 
-dotenv_path = Path('.ENV')
+dotenv_path = Path('../.ENV')
 load_dotenv(dotenv_path=dotenv_path)
 
 pg_url = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_SERVER')}/savvyiot"

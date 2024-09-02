@@ -5,3 +5,5 @@
 data
 **/__pycache__
 .vscode
+**/pymakr.conf
+**/secret.py
