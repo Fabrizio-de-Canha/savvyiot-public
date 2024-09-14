@@ -86,7 +86,7 @@ while True:
         if lastTicks > 0:
             ticksDifference = time.ticks_diff(currentTicks, lastTicks)
 
-            if ticksDifference > 10:
+            if ticksDifference > 500:
                 times.append(ticksDifference)
                 timestamps.append(timestamp)
 

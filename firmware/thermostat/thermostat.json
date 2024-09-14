@@ -1,0 +1,7 @@
+{
+    "upper_limit": 105,
+    "lower_limit": 70,
+    "max_temp": 130,
+    "min_temp": 10,
+    "heater": true
+}

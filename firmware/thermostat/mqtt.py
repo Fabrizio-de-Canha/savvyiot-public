@@ -13,11 +13,11 @@ led_pin = machine.Pin(13, machine.Pin.OUT)
 macAddress = ubinascii.hexlify(machine.unique_id()).decode()
 
 ## OUT
-mqtt_data_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/data'
-mqtt_health_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/status'
+mqtt_data_topic = f'{mqtt_ClientID}/thermostat/{macAddress}/data'
+mqtt_health_topic = f'{mqtt_ClientID}/thermostat/{macAddress}/status'
 
 ## IN
-mqtt_control_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/control'
+mqtt_control_topic = f'{mqtt_ClientID}/thermostat/{macAddress}/control'
 
 def connect_mqtt():
     client = MQTTClient(f'{mqtt_ClientID}_{macAddress}', mqtt_server, 1883, mqtt_username, mqtt_password)
@@ -60,11 +60,6 @@ def send_health_check(wifi_client, mqtt_client, firmware_version):
         rssi = wifi_client.status('rssi')
         timestamp = 946684800 + utime.time()
 
-        ## If the timestamp is less than 2001
-        if timestamp < 978307200:
-            set_time()
-            timestamp = 946684800 + utime.time()
-            
         try:
             mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
         except OSError:
@@ -90,12 +85,6 @@ def send_payload(wifi_client, mqtt_client, times, timestamps):
     if wifi_client.isconnected():
         rssi = wifi_client.status('rssi')
         timestamp = 946684800 + utime.time()
-
-        ## If the timestamp is less than 2001
-        if timestamp < 978307200:
-            set_time()
-            timestamp = 946684800 + utime.time()
-
         if len(times) > 0:
             count = 0
             body = ''
