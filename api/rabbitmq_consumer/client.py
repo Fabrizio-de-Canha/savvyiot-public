@@ -7,7 +7,7 @@ import sys
 from sqlalchemy.orm import Session
 
 dotenv_path = Path('.ENV')
-sys.path.append(str(Path(__file__).parent.parent) + "/api")
+# sys.path.append(str(Path(__file__).parent.parent) + "/api")
 from models.messages import Message
 from db.session import session_maker
 

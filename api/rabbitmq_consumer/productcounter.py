@@ -1,10 +1,9 @@
 import sys 
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent) + "/api")
-from models.user import User 
-from models.messages import Message 
+# sys.path.append(str(Path(__file__).parent.parent) + "/api")
+from models import *
 
-from client import RabbitConsumer, dbClient
+from .client import RabbitConsumer, dbClient
 from pika.spec import Basic, BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel
 from datetime import datetime, timezone
@@ -36,6 +35,7 @@ def callback_func(
             print(deliveryTag)
         except Exception as e:
             print(e)
+            ch.basic_nack(delivery_tag=method.delivery_tag)
               
 
 consumer = RabbitConsumer(queueName="dev", callbackFunc=callback_func)

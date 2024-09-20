@@ -101,9 +101,9 @@ def send_payload(wifi_client, mqtt_client, times, timestamps):
             body = ''
             for i in times:
                 if count == 0:
-                    body = f'{{"cycle_time":{i},"cycle_completed_timestamp":{timestamps[count]}}}'
+                    body = f'{{"type": "cycle_time_1","value":{i},"timestamp":{timestamps[count]}}}'
                 else:
-                    body = f'{body},{{"cycle_time":{i},"cycle_completed_timestamp":{timestamps[count]}}}'
+                    body = f'{body},{{"type": "cycle_time_1","value":{i},"timestamp":{timestamps[count]}}}'
                 count += 1
 
             try:
