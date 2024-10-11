@@ -4,8 +4,6 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
-
-dotenv_path = Path('.ENV')
 from models.messages import Message
 from models.devices import Device
 from db.session import session_maker
@@ -16,8 +14,6 @@ class RabbitConsumer():
         self._callback = callbackFunc
 
     def run(self):
-        load_dotenv(dotenv_path=dotenv_path)
-        print(os.getenv('RABBITMQ_VHOST'))
 
         credentials = pika.PlainCredentials(os.getenv('RABBITMQ_USERNAME'), os.getenv('RABBITMQ_PASSWORD'))
         connection = pika.BlockingConnection(

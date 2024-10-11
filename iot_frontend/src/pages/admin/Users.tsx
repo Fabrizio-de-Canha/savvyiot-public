@@ -32,12 +32,14 @@ interface user {
   created_on?: Date | null;
 }
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 export function Users() {
   const [users, setUsers] = useState<user[]>([] as user[]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/user", {
+      .get(`${apiUrl}/user`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token_local")}`,
         },

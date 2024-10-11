@@ -14,9 +14,9 @@ import {
     Plus
   } from "lucide-react";
 
-interface createUserProps{
-    callback?: void
-}
+// interface createUserProps{
+//     callback?: void
+// }
 
 export function CreateUserDialog() {
   return (

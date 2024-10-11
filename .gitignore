@@ -1,4 +1,4 @@
-.ENV
+.env
 .venv
 */private.pem
 */public.pem
@@ -7,3 +7,4 @@ data
 .vscode
 **/pymakr.conf
 **/secret.py
+/iot_frontend/.env

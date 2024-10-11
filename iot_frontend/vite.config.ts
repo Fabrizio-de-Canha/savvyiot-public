@@ -9,4 +9,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Set base URL if the app is deployed to a subpath (optional)
+  base: '/', // Adjust this if your app is hosted in a subdirectory, e.g., '/my-app/'
+  build: {
+    rollupOptions: {
+      output: {
+        // Ensures all chunks are output together, useful for SPAs
+        manualChunks: undefined,
+      },
+    },
+  },
 })

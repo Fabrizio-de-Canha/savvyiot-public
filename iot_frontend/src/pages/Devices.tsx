@@ -5,13 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { WifiStrength } from "@/components/custom/wifiStrength";
-import { Maximize2 } from "lucide-react";
 import moment from "moment";
 import { MachineDialog } from "@/components/custom/MachineDialog";
 import { Pie, PieChart } from "recharts";
@@ -19,8 +16,6 @@ import { Pie, PieChart } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -74,6 +69,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+const wsUrl = import.meta.env.VITE_APP_API_WS_URL;
+
 export function Devices() {
   const [devices, setDevices] = useState<device[]>([] as device[]);
   const [healthSummary, setHealthSummary] = useState<deviceHealth[]>(
@@ -84,7 +82,7 @@ export function Devices() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/devices", {
+      .get(`${apiUrl}/devices`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token_local")}`,
         },
@@ -123,7 +121,7 @@ export function Devices() {
       });
 
     const ws = new WebSocket(
-      `ws://localhost:8000/updates/ws?token=${localStorage.getItem(
+      `${wsUrl}/updates/ws?token=${localStorage.getItem(
         "token_local"
       )}`
     );

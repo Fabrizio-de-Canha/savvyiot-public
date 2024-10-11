@@ -56,8 +56,7 @@ currentTicks = 0
 lastDigitalReading = -1
 
 while True:
-    # try:
-    if(1 == 1):
+    try:
         timestamp = 946684800 + utime.time()
 
         ## Read digital pin
@@ -68,7 +67,7 @@ while True:
             wifi_client = update_time(wifi_client)
             lastTimeUpdate = timestamp
 
-        if timestamp - lastMqttEvent > 600:
+        if timestamp - lastMqttEvent > 300:
             # send health check every 10 min where no messages were sent
             mqtt_client = send_health_check(wifi_client, mqtt_client,firmware_version)
             lastMqttEvent = timestamp
@@ -111,6 +110,6 @@ while True:
 
         ##Check if there are messages
         check_process_messages(mqtt_client)
-    # except Exception as e:
-    #     print("Exception in main loop")
-    #     print(e)
+    except Exception as e:
+        print("Exception in main loop")
+        print(e)

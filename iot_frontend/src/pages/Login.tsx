@@ -13,15 +13,16 @@ import axios from "axios";
 import { setToken } from "@/auth/auth";
 import { useNavigate } from "react-router-dom";
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 export function LoginForm() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (event: FormEvent) => {
     console.log("Submitting");
-    setLoading(true);
     event.preventDefault();
     handleLogin();
   };
@@ -29,7 +30,7 @@ export function LoginForm() {
   function handleLogin() {
     axios
       .post(
-        "http://localhost:8000/login",
+        `${apiUrl}/login`,
         {
           username: username,
           password: password,

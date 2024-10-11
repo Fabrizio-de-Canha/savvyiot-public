@@ -1,5 +1,4 @@
 import { RequireAdminToken, RequireToken } from "./auth/auth";
-import { HomePage } from "./pages/Home";
 import { LoginForm } from "./pages/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavWrapper } from "./components/wrappers/NavWrapper";

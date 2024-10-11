@@ -16,7 +16,7 @@ import {
   BarChart,
   CartesianGrid,
   LabelList,
-  XAxis,
+  // XAxis,
   YAxis,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
@@ -43,6 +43,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 export function MachineDialog(props: MachineProps) {
   const [data, setData] = useState<DeviceDetails[]>([] as DeviceDetails[]);
   const [maxVal, setMaxVal] = useState<number>();
@@ -51,7 +53,7 @@ export function MachineDialog(props: MachineProps) {
     try {
       axios
         .post(
-          "http://localhost:8000/devices/deviceData",
+          `${apiUrl}/devices/deviceData`,
           {
             device_mac: props.device.mac_id,
             value_type: "cycle_time_1",
