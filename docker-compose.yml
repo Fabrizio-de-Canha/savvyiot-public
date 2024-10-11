@@ -31,8 +31,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: dockerfiles/frontend.Dockerfile
+      context: ./iot_frontend  # Set the context to the frontend directory
+      dockerfile: ../dockerfiles/frontend.Dockerfile  # Adjust path to your Dockerfile if necessary
     container_name: savvyiot-frontend
     ports:
       - "3000:3000"

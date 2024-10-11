@@ -3,7 +3,9 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY ../iot_frontend/ .
+# Copy everything from the build context (iot_frontend directory)
+COPY . .  
+# This will copy everything from the iot_frontend directory
 
 RUN npm ci --legacy-peer-deps
 
@@ -12,4 +14,4 @@ RUN npm install -g serve
 
 EXPOSE 3000
 
-CMD serve -s dist
+CMD ["serve", "-s", "dist"]
