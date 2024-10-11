@@ -44,6 +44,7 @@ services:
       context: .
       dockerfile: dockerfiles/ingestor.Dockerfile
     container_name: savvyiot-ingestor
+    network_mode: "host"
     environment:
       RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
