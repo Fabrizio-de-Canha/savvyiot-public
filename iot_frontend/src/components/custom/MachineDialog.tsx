@@ -158,6 +158,12 @@ export function MachineDialog(props: MachineProps) {
                 : "Not recorded"}
             </p>
           </div>
+          <div className=" flex w-full">
+            <h2 className="mr-auto font-bold">Firmware:</h2>
+            <p>
+              {props.device.firmware_version}
+            </p>
+          </div>
         </div>
 
         <DialogFooter></DialogFooter>
