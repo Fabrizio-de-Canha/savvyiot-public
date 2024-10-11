@@ -1,9 +1,10 @@
 import { RequireAdminToken, RequireToken } from "./auth/auth";
 import { HomePage } from "./pages/Home";
 import { LoginForm } from "./pages/Login";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavWrapper } from "./components/wrappers/NavWrapper";
 import { Products } from "./pages/Products";
+import { Devices } from "./pages/Devices";
 import { Users } from "./pages/admin/Users";
 
 export default function App() {
@@ -11,6 +12,8 @@ export default function App() {
     <div className="min-h-screen content-center items-center">
       <BrowserRouter basename="/">
         <Routes>
+          <Route path="/" element={<Navigate to="/home" />} />
+
           <Route path="/login" element={<LoginForm />} />
 
           <Route
@@ -40,7 +43,7 @@ export default function App() {
             element={
               <RequireToken>
                 <NavWrapper>
-                  <Products />
+                  <Devices />
                 </NavWrapper>
               </RequireToken>
             }

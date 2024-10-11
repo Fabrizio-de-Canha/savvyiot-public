@@ -71,7 +71,7 @@ async def get_token_header(token: str = Depends(oauth2_scheme)):
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    return user_id
+    return {"user_id": user_id, "tenant": "legend"}
 
 async def get_admin_header(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(

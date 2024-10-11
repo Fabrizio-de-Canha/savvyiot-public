@@ -9,6 +9,7 @@ import {
   Search,
   ShoppingCart,
   Users,
+  Cable,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,26 +60,16 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
 
   const Menus: Array<MenuItem> = [
     {
-      title: "Dashboard",
-      route: "/dashboard",
-      icon: <Home className="h-4 w-4" />,
-    },
-    {
-      title: "Orders",
-      route: "/orders",
-      icon: <ShoppingCart className="h-4 w-4" />,
-    },
-    {
-      title: "Products",
-      route: "/products",
-      icon: <Package className="h-4 w-4" />,
+      title: "Devices",
+      route: "/devices",
+      icon: <Cable className="h-4 w-4" />,
     },
     { title: "Users", route: "/users", icon: <Users className="h-4 w-4" /> },
-    {
-      title: "Analytics",
-      route: "/analytics",
-      icon: <LineChart className="h-4 w-4" />,
-    },
+    // {
+    //   title: "Analytics",
+    //   route: "/analytics",
+    //   icon: <LineChart className="h-4 w-4" />,
+    // },
   ];
 
   return (
@@ -88,7 +79,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <a href="/" className="flex items-center gap-2 font-semibold">
               <Package2 className="h-6 w-6" />
-              <span className="">Acme Inc</span>
+              <span className="">IOT Hub</span>
             </a>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
@@ -109,7 +100,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4">
+          {/* <div className="mt-auto p-4">
             <Card x-chunk="dashboard-02-chunk-0">
               <CardHeader className="p-2 pt-0 md:p-4">
                 <CardTitle>Upgrade to Pro</CardTitle>
@@ -124,11 +115,11 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
                 </Button>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+      <div className="flex flex-col h-full max-h-screen">
+        <header className="flex min-h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:min-h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -147,7 +138,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <span className="sr-only">IOT Hub</span>
                 </a>
                 {Menus.map((menu, index) => (
                   <a
@@ -160,7 +151,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
                   </a>
                 ))}
               </nav>
-              <div className="mt-auto">
+              {/* <div className="mt-auto">
                 <Card>
                   <CardHeader>
                     <CardTitle>Upgrade to Pro</CardTitle>
@@ -175,7 +166,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
                     </Button>
                   </CardContent>
                 </Card>
-              </div>
+              </div> */}
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
@@ -184,7 +175,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder="Search"
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
@@ -218,7 +209,7 @@ export function NavWrapper(props: NavWrapperProps): ReactElement {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto">
           {props.children}
         </main>
       </div>

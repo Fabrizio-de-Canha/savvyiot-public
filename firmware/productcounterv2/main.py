@@ -40,7 +40,7 @@ if 'version.json' in os.listdir():
     with open('version.json') as f:
         firmware_version = int(json.load(f)['version'])
 
-mqtt_client = send_health_check(wifi_client, mqtt_client, firmware_version)
+mqtt_client = send_health_check(wifi_client, mqtt_client, firmware_version, is_boot=True)
 
 message_interval = 5
 
@@ -49,59 +49,68 @@ timestamps = []
 
 lastTimeUpdate = 946684800 + utime.time()
 lastHealthcheck = 946684800 + utime.time()
+lastMqttEvent = 946684800 + utime.time()
 lastTicks = 0
 currentTicks = 0
 
 lastDigitalReading = -1
 
 while True:
-    timestamp = 946684800 + utime.time()
+    # try:
+    if(1 == 1):
+        timestamp = 946684800 + utime.time()
 
-    ## Read digital pin
-    currentDigitalReading = digital_input.value()
+        ## Read digital pin
+        currentDigitalReading = digital_input.value()
 
-    if timestamp - lastTimeUpdate > 86400:
-        # If it's been a day since last time update
-        update_time(wifi_client)
-        lastTimeUpdate = timestamp
+        if timestamp - lastTimeUpdate > 86400:
+            # If it's been a day since last time update
+            wifi_client = update_time(wifi_client)
+            lastTimeUpdate = timestamp
 
-    if timestamp - lastHealthcheck > 1800:
-        # send health check every hour
-        mqtt_client = send_health_check(wifi_client, mqtt_client,firmware_version)
-        lastHealthcheck = timestamp
+        if timestamp - lastMqttEvent > 600:
+            # send health check every 10 min where no messages were sent
+            mqtt_client = send_health_check(wifi_client, mqtt_client,firmware_version)
+            lastMqttEvent = timestamp
+            lastHealthcheck = timestamp
 
-    if(relay_1_input.value() == 1):
-        relay_1.value(1)
-    else:
-        relay_1.value(0)
+        if(relay_1_input.value() == 1):
+            relay_1.value(1)
+        else:
+            relay_1.value(0)
 
-    if(relay_2_input.value() == 1):
-        relay_2.value(1)
-    else:
-        relay_2.value(0)
+        if(relay_2_input.value() == 1):
+            relay_2.value(1)
+        else:
+            relay_2.value(0)
 
-    if (currentDigitalReading == 0 and lastDigitalReading == 1):
-        led_pin.value(0)
-        currentTicks = utime.ticks_ms()
-        if lastTicks > 0:
-            ticksDifference = time.ticks_diff(currentTicks, lastTicks)
+        if (currentDigitalReading == 0 and lastDigitalReading == 1):
+            led_pin.value(0)
+            currentTicks = utime.ticks_ms()
+            if lastTicks > 0:
+                ticksDifference = time.ticks_diff(currentTicks, lastTicks)
 
-            if ticksDifference > 500:
-                times.append(ticksDifference)
-                timestamps.append(timestamp)
+                if ticksDifference > 500:
+                    times.append(ticksDifference)
+                    timestamps.append(timestamp)
 
-                ## Send the data here
-                print(times)
-                print(timestamps)
+                    ## Send the data here
+                    print(times)
+                    print(timestamps)
 
-                mqtt_client, times, timestamps = send_payload(wifi_client, mqtt_client, times, timestamps)
+                    mqtt_client, times, timestamps = send_payload(wifi_client, mqtt_client, times, timestamps)
+
+                    lastMqttEvent = timestamp
+
+            lastTicks = currentTicks
         
-        lastTicks = currentTicks
-    
-    if (currentDigitalReading == 1 and lastDigitalReading == 0):
-        led_pin.value(1)
+        if (currentDigitalReading == 1 and lastDigitalReading == 0):
+            led_pin.value(1)
 
-    lastDigitalReading = currentDigitalReading
+        lastDigitalReading = currentDigitalReading
 
-    ##Check if there are messages
-    check_process_messages(mqtt_client)
+        ##Check if there are messages
+        check_process_messages(mqtt_client)
+    # except Exception as e:
+    #     print("Exception in main loop")
+    #     print(e)

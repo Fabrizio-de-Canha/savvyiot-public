@@ -1,6 +1,6 @@
 from db.session import Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, Text, DateTime, Boolean, ForeignKey, text, Float, TIMESTAMP
+from sqlalchemy import Column, Integer, NUMERIC, Text, DateTime, Boolean, ForeignKey, text, Float, TIMESTAMP
 from sqlalchemy.dialects.postgresql import JSONB, UUID, BYTEA
 from sqlalchemy.sql import func
 from uuid import uuid4
@@ -12,6 +12,8 @@ class Message(Base):
     device_mac = Column('device_mac', Text)
     tenant = Column('tenant', Text)
     timestamp = Column('timestamp', TIMESTAMP(), nullable=False)
-    message = Column('message', JSONB)
+    message_timestamp = Column('message_timestamp', TIMESTAMP())
+    value_type = Column('value_type', Text)
+    value = Column('value', NUMERIC)
     time_received = Column('time_received', DateTime(), server_default=func.now())
     

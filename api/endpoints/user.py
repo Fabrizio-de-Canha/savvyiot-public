@@ -3,7 +3,6 @@ from deps import get_session
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session, Query
 from endpoints.authenticate import get_admin_header, get_token_header, hash_password
 from schemas.auth.user import UserBase, ForgottenPasswordBase, AddUserBase
 from random import randbytes

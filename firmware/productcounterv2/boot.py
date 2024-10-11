@@ -22,7 +22,7 @@ def set_time():
 def do_connect(client):
     import time    
     if not client.isconnected():
-        for i in range(7):
+        for i in range(8):
             print(f'connecting to network: try {i + 1}...')
             client.active(True)
             try:
@@ -41,10 +41,16 @@ def do_connect(client):
         print('network config:', client.ifconfig())
 
 def update_time(client):
-    if not client.isconnected():
-        clientNew = do_connect(client)
+    try:
+        if not client.isconnected():
+            clientNew = do_connect(client)
 
-        if clientNew.isconnected():
+            if clientNew.isconnected():
+                set_time()
+                return clientNew
+        else:
             set_time()
-    else:
-        set_time()
+            return client
+    except Exception as e:
+        print('failed to set time')
+        print(e)

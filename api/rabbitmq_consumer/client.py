@@ -1,14 +1,13 @@
-from fastapi import HTTPException
 import pika
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import sys 
 from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert
 
 dotenv_path = Path('.ENV')
-# sys.path.append(str(Path(__file__).parent.parent) + "/api")
 from models.messages import Message
+from models.devices import Device
 from db.session import session_maker
 
 class RabbitConsumer():
@@ -50,6 +49,44 @@ class dbClient:
             print(e)
             return False
         
-    def updateDevice():
-        pass
+    def updateDevice(self, device: Device):
+        try:
+            if device.firmware_version:
+                update_dict = dict(
+                        last_reported = device.last_reported,
+                        rssi = device.rssi,
+                        firmware_version = device.firmware_version
+                    )
+            else:
+                update_dict = dict(
+                        last_reported = device.last_reported,
+                        rssi = device.rssi
+                    )
+                
+            if device.last_booted:
+                update_dict['last_booted'] = device.last_booted
 
+            stmt = insert(Device).values(
+                    mac_id = device.mac_id, 
+                    tenant =device.tenant, 
+                    last_reported = device.last_reported,
+                    rssi = device.rssi
+                ).on_conflict_do_update(
+                    index_elements=['mac_id'],  # The unique constraint or primary key to check conflicts on
+                    set_= update_dict
+                )
+            
+            self.session.execute(stmt)
+            self.session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+        
+class UpdateDeviceException(Exception):
+    """Raised when the device state could not be updated"""
+    pass
+
+class InsertMessageException(Exception):
+    """Raised when the message could not be processed"""
+    pass

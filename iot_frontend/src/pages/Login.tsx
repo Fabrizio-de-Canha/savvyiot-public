@@ -43,7 +43,7 @@ export function LoginForm() {
       .then(function (response) {
         if (response.data.access_token) {
           setToken(response.data.access_token);
-          navigate("/home");
+          navigate("/devices");
         }
       })
       .catch(function (error) {
@@ -52,7 +52,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-auto max-w-sm ">
       <CardHeader>
         <CardTitle className="text-2xl w-full text-center">Login</CardTitle>
         <CardDescription>

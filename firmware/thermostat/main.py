@@ -77,7 +77,6 @@ while True:
     currentDigitalReading = digital_input.value()
 
     ## Read temperature
-
     if(utime.ticks_ms() - lastTempReadingTicks > 1000):
         print(maxTempSensor.readCelsius())
         isOverheating = False

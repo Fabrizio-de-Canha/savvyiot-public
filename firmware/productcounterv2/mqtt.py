@@ -15,6 +15,7 @@ macAddress = ubinascii.hexlify(machine.unique_id()).decode()
 ## OUT
 mqtt_data_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/data'
 mqtt_health_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/status'
+mqtt_startup_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/startup'
 
 ## IN
 mqtt_control_topic = f'{mqtt_ClientID}/productcounter/{macAddress}/control'
@@ -48,8 +49,13 @@ def connect_mqtt():
 
     return client
 
-def send_health_check(wifi_client, mqtt_client, firmware_version):
+def send_health_check(wifi_client, mqtt_client, firmware_version, is_boot=False):
     ## Get firmware version
+
+    if is_boot:
+        topic = mqtt_startup_topic
+    else:
+        topic = mqtt_health_topic
 
     if not wifi_client.isconnected():
         do_connect(wifi_client)
@@ -66,11 +72,11 @@ def send_health_check(wifi_client, mqtt_client, firmware_version):
             timestamp = 946684800 + utime.time()
             
         try:
-            mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
+            mqtt_client.publish(topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
         except OSError:
                 mqtt_client = connect_mqtt()
                 try:
-                    mqtt_client.publish(mqtt_health_topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
+                    mqtt_client.publish(topic, f'{{"timestamp":{timestamp},"rssi":{rssi},"firmware_version":{firmware_version}}}')
                 except OSError:
                     return
     
@@ -123,12 +129,14 @@ def check_process_messages(mqtt_client):
     try:
         mqtt_client.check_msg()
     except OSError as e:
-        print(e)
+        print('failed to check message')
+
+
 
 def recieve_mqtt(topic, msg):
     if(topic.decode().split("/")[-1] == "control"):
-        jsonObj = json.loads(msg)
         try:
+            jsonObj = json.loads(msg)
             if(jsonObj['type'] == "reset"):
                 machine.reset()
         except:

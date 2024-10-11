@@ -6,7 +6,6 @@ from db.session import Base, pg_url
 
 from alembic import context
 
-
 def exclude_by_name(name, type_, parent_names):
     exclude_indexes = ["messages_timestamp_idx"]
     if type_ == "index":
@@ -28,6 +27,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -81,7 +81,6 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
-
 
 if context.is_offline_mode():
     run_migrations_offline()
