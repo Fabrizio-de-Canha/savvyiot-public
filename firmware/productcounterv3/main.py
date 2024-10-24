@@ -1,35 +1,58 @@
-import machine  # type: ignore
+import machine # type: ignore
 import time
-import utime # type: ignore
+from provisioning import start_provisioning
+import ubinascii  # type: ignore
 from boot import do_connect, set_time, update_time
 from mqtt import connect_mqtt, send_payload, send_health_check, check_process_messages
 import network # type: ignore
-from ota import OTAUpdater
 from secret import firmware_url
-import os
+from ota import OTAUpdater
+import utime # type: ignore
 import json
-import ubinascii  # type: ignore
+import os
 
 print(ubinascii.hexlify(machine.unique_id()).decode())
 
 led_pin = machine.Pin(13, machine.Pin.OUT)
+led2_pin = machine.Pin(12, machine.Pin.OUT)
 relay_1 = machine.Pin(33, machine.Pin.OUT)
 relay_2 = machine.Pin(32, machine.Pin.OUT)
 digital_input = machine.Pin(17, machine.Pin.IN)
 
+relay_1.value(0)
+relay_2.value(0)
+led_pin.value(1)
+led2_pin.value(1)
+
 relay_1_input = machine.Pin(34, machine.Pin.IN)
 relay_2_input = machine.Pin(35, machine.Pin.IN)
 
-## WIFI
+provision_count = 0
+must_provision_count = 0
+
+while provision_count < 12:
+    if((relay_1_input.value() == 1) and (relay_2_input.value() == 1)):
+        print('provision +1')
+        must_provision_count += 1
+    
+    if must_provision_count > 5:
+        relay_1.value(1)
+        relay_2.value(1)
+        led_pin.value(0)
+        led2_pin.value(0)
+        start_provisioning()
+
+    time.sleep(0.5)
+    provision_count += 1
+
 wifi_client = network.WLAN(network.STA_IF)
 do_connect(wifi_client)
 
 ##Check for firmware update
 if wifi_client.isconnected():
     set_time()
-    ota_updater = OTAUpdater(wifi_client, firmware_url, ['main.py', 'boot.py', 'mqtt.py'])
+    ota_updater = OTAUpdater(wifi_client, firmware_url, ['main.py', 'boot.py', 'mqtt.py', 'provision.py'])
     ota_updater.download_and_install_update_if_available()
-
 
 ##MQTT
 mqtt_client = connect_mqtt()
