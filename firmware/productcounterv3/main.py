@@ -78,6 +78,11 @@ currentTicks = 0
 
 lastDigitalReading = -1
 
+last_relay_1_val = 0
+last_relay_2_val = 0
+relay_1_state = False
+relay_2_state = False
+
 while True:
     try:
         timestamp = 946684800 + utime.time()
@@ -97,14 +102,27 @@ while True:
             lastHealthcheck = timestamp
 
         if(relay_1_input.value() == 1):
-            relay_1.value(1)
+            if(last_relay_1_val == 0):
+                 relay_1_state = not relay_1_state 
+                 if relay_1_state:
+                     relay_1.value(1)
+                 else:
+                     relay_1.value(0)
+            last_relay_1_val = 1
         else:
-            relay_1.value(0)
+            last_relay_1_val = 0
 
         if(relay_2_input.value() == 1):
-            relay_2.value(1)
+            if(last_relay_2_val == 0):
+                 relay_2_state = not relay_2_state 
+                 if relay_2_state:
+                     relay_2.value(1)
+                 else:
+                     relay_2.value(0)
+            last_relay_2_val = 1
         else:
-            relay_2.value(0)
+            last_relay_2_val = 0
+
 
         if (currentDigitalReading == 0 and lastDigitalReading == 1):
             led_pin.value(0)
